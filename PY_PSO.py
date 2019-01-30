@@ -61,6 +61,25 @@ def partition(distance_from_centroid):
                     partition[i][m] = j
     return partition
 
+def centroid_of_iris():
+    centroid_of_iris = np.zeros([k,dim])
+    for i in range(data_size):
+        list_iris = iris.tolist()
+        for j in range(dim):    
+            centroid_of_iris[int(list_iris[i][4]-1)][j] = centroid_of_iris[int(list_iris[i][4]-1)][j] + iris[i][j]
+                
+    for i in range(k):
+        for j in range(dim):
+            centroid_of_iris[i][j] = centroid_of_iris[i][j]/50
+    
+    return centroid_of_iris
+
+
+
+#def classify_centroid(distance_from_centroid):
+    
+
+
 """def evaluate_fitness(particle):
     fittness = []
     for i in range(particle_num):
@@ -81,10 +100,9 @@ def partition(distance_from_centroid):
 particle,velocity = init_partical()
 distance_from_centroid = evaluate_distance_from_centroid(particle)
 partition = partition(distance_from_centroid)
+centroid_of_iris = centroid_of_iris()
+print(centroid_of_iris)
 
-
-#for i in range(data_size):
-#    print(partition[0][i])
 
     
 
