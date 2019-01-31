@@ -48,7 +48,6 @@ def evaluate_distance_from_centroid(particle):
                 distance_from_centroid[i][j].append(tmp_distance**0.5)   
     return distance_from_centroid
 
-#def fittness():
 
 def partition(distance_from_centroid):
     partition = np.empty([particle_num,data_size])
@@ -59,7 +58,27 @@ def partition(distance_from_centroid):
                 if distance_from_centroid[i][j][m] < min_distance:
                     min_distance = distance_from_centroid[i][j][m]
                     partition[i][m] = j
-    return partition
+    
+    centroid_of_particle = np.empty([particle_num,k,dim])
+    partition = partition.tolist()
+    
+    for i in range(particle_num):
+        #centroid_of_particle.append([])
+        tmp = np.zeros([k,dim])
+        count = np.zeros(k)
+        for j in range(data_size):
+            for m in range(dim):
+                tmp[int(partition[i][j])][m] = tmp[int(partition[i][j])][m] + iris[j][m]
+            count[int(partition[i][j])] = count[int(partition[i][j])] + 1    
+        
+        for j in range(k):
+            tmp[j] /= count[j]
+        tmp = tmp.tolist()
+        for j in range(k):
+            for m in range(dim):
+                centroid_of_particle[i][j][m] = tmp[j][m]      
+
+    return centroid_of_particle,partition
 
 def centroid_of_iris():
     centroid_of_iris = np.zeros([k,dim])
@@ -76,32 +95,60 @@ def centroid_of_iris():
 
 
 
-#def classify_centroid(distance_from_centroid):
+def classify_centroid(centroid_of_particle,centroid_of_iris,partition):
     
-
-
-"""def evaluate_fitness(particle):
-    fittness = []
     for i in range(particle_num):
-        SSE=0.0
+        
+        console = np.zeros([k])
+        tmp = centroid_of_iris.copy().tolist()
+        
         for j in range(k):
-            for m in range(data_size):
-                distance=0.0
+            distance = np.zeros([k])
+            tmp_distance=0.0
+            
+            for m in range(k):
                 for d in range(dim):
-                    distance = distance + ((particle[i][j][d]-iris[m][d])**2)**0.5
-                #print(distance)
-                SSE = SSE + distance**2
-        #print(i," ",SSE)        
-        fittness.append(SSE)
-    return fittness
-"""
+                    tmp_distance += (centroid_of_particle[i][j][d] - tmp[m][d])**2
+                tmp_distance = tmp_distance**0.5    
+                distance[m] = tmp_distance
+
+            min_distance = 100
+            
+            flag = -1
+            for m in range(k):
+                if min_distance > distance[m]:
+                    min_distance = distance[m]
+                    flag = m
+            
+            console[j] = flag + 1
+            for d in range(dim):
+                tmp[flag][d] = 1000 
+
+        for j in range(data_size):
+            for m in range(k):
+                if partition[i][j] == m:
+                    partition[i][j] = console[m]
+    print(console)
+    return partition
+                        
+        
+                    
+
+#def evaluate_fitness(particle):
+
 #def update_particle:
 
 particle,velocity = init_partical()
 distance_from_centroid = evaluate_distance_from_centroid(particle)
-partition = partition(distance_from_centroid)
+centroid_of_particle,partition = partition(distance_from_centroid)
 centroid_of_iris = centroid_of_iris()
-print(centroid_of_iris)
+print(partition[9])
+
+partition = classify_centroid(centroid_of_particle,centroid_of_iris,partition)
+print(partition[9])
+
+
+
 
 
     
